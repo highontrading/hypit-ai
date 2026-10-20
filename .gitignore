@@ -1,3 +1,8 @@
 node_modules/
+.hypit/
+packages/*/dist/
+packages/*/src/generated.ts
 references/*/source.*
 references/*/evidence/
+productions/*/drafts/
+drafts/

@@ -1,0 +1,39 @@
+<?svml using="@hypit/markup@1"?>
+<svml>
+  <import as="time" from="@hypit/timeline-author@1"/>
+  <import as="spatial" from="@hypit/spatial@1"/>
+  <import as="media" from="@hypit/media@1"/>
+  <import as="mediaop" from="@hypit/media-operations@1"/>
+  <import as="audio" from="@hypit/audio-track@1"/>
+  <import as="fonts" from="@hypit/fontsource@1"/>
+  <import as="ad" from="@viibe/ad-scene@1"/>
+  <import as="film" from="@hypit/film@1"/>
+  <import as="html" from="@hypit/html-video@1"/>
+  <import as="look" source="./look.svs"/>
+
+  <!-- A wholly authored animation: the scene owns its beats; the sound file follows the same clock. -->
+  <time:Clock id="clock" frame-rate="60"/>
+  <time:Timeline id="program" clock={clock} end="11.9s"/>
+  <spatial:Canvas id="canvas" width="1080" height="1920"/>
+
+  <fonts:Face id="medium-face" package="@fontsource-variable/inter" weight="500" style="normal"/>
+  <fonts:Face id="bold-face" package="@fontsource-variable/inter" weight="700" style="normal"/>
+  <media:FontStack id="medium" primary={medium-face}/>
+  <media:FontStack id="bold" primary={bold-face}/>
+
+  <ad:Scene id="ad" timeline={program.timeline} within={canvas.bounds} font={medium} bold={bold}
+    during={program.window} brand="Viibe Edit" tagline="Vibe Editing"/>
+
+  <!-- Synthesized by ../sound/make_sound.py: whooshes, clicks, typing, impacts, chime and music bed. -->
+  <media:Audio id="sound-file" src="../assets/sound.wav"/>
+  <mediaop:Normalize id="sound" source={sound-file} clock={clock} video="none" audio="default" span-authority="audio"/>
+  <audio:Track id="mix" timeline={program.timeline}>
+    <audio:Clip id="sound" source={sound.media} during={program.window}/>
+  </audio:Track>
+
+  <film:Film id="main" canvas={canvas.canvas} timeline={program.timeline} appearance={look.film.main}>
+    <film:Track source={ad.visual}/>
+    <film:Track source={mix.audio}/>
+  </film:Film>
+  <html:Video id="final" composition={main.composition} timeline={program.timeline}/>
+</svml>
